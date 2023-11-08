@@ -8,10 +8,11 @@
       community.general.interfaces_file:
         dest: /etc/network/interfaces
         iface: eth0
-        family: inet
-        method: static
-        address: 10.10.10.1
-        netmask: 255.255.255.0
+        option:
+          address_family: inet
+          method: static
+          address: 10.10.10.1
+          netmask: 255.255.255.0
 
     - name: Ensure NFS client is installed
       ansible.builtin.apt:
