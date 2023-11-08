@@ -1,0 +1,38 @@
+---
+- name: Configure eth0 and NFS mount on Raspberry Pi
+  hosts: localhost
+  connection: local
+  become: yes
+  tasks:
+    - name: Assign static IP to eth0
+      community.general.interfaces_file:
+        dest: /etc/network/interfaces
+        iface: eth0
+        family: inet
+        method: static
+        address: 10.10.10.1
+        netmask: 255.255.255.0
+
+    - name: Ensure NFS client is installed
+      ansible.builtin.apt:
+        name: nfs-common
+        state: present
+
+    - name: Create /data directory for NFS mount
+      ansible.builtin.file:
+        path: /data
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Add NFS mount to fstab
+      ansible.builtin.mount:
+        path: /data
+        src: '10.10.10.2:/nfs/data'
+        fstype: nfs
+        opts: defaults
+        dump: '0'
+        passno: '0'
+        state: mounted
+
